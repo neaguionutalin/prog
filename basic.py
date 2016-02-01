@@ -14,24 +14,36 @@ def lex(filecontents):
     for char in filecontents:
         tok += char
         if tok == " ":
+            if state == 0:
+                tok = ""
+            else:
+                tok = " "
+        elif tok == "\n":
             tok = ""
         elif  tok == "print":
-            print("found a print")
+            tokens.append("PRINT")
             tok = ""
         elif tok == "\"":
             if state == 0:
                 state = 1
             elif state ==1:
-                print("found a string")
+                tokens.append("STRING:" + string + "\"")
                 string = "" 
                 state =0
+                tok = "" 
         elif state == 1: 
-            string += char
+            string += tok
             tok = "" 
-
+    return tokens
+    #print(tokens)
+        
+        
+def parse(toks):
+    print(toks)
+        
         
 def run():
     data = open_file(argv[1])
-    lex(data)
-
+    toks = lex(data)
+    parse(toks)
 run()
