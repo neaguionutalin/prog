@@ -1,2 +1,2 @@
 print "Hello World"
-print "My name is Alin"
+print 93+23
