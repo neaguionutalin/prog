@@ -4,15 +4,12 @@ tokens = []
 
 def open_file(filename):
     data = open(filename, "r").read()
-    data += "<EOF>"
     return data
 
 def lex(filecontents):
     tok = ""
     state = 0
     string = ""
-    expr = ""
-    n = ""
     filecontents = list(filecontents)
     for char in filecontents:
         tok += char
@@ -21,19 +18,10 @@ def lex(filecontents):
                 tok = ""
             else:
                 tok = " "
-        elif tok == "\n" or tok == "<EOF>" :
-            if expr != "":
-                print(expr)
-                expr = ""
+        elif tok == "\n":
             tok = ""
-        elif  tok == "print" or tok == "PRINT" or tok == "Print":
+        elif  tok == "print":
             tokens.append("PRINT")
-            tok = ""
-        elif tok == "0" or tok == "1" or tok == "2" or tok == "3" or tok == "4" or tok == "5" or tok == "6" or tok == "7" or tok == "8" or tok == "9":
-            expr += tok
-            tok = ""
-        elif tok == "+":
-            expr += tok
             tok = ""
         elif tok == "\"":
             if state == 0:
@@ -52,11 +40,10 @@ def lex(filecontents):
         
 def parse(toks):
     i = 0
-    while (i<len(toks)):
+    while(i<len(toks)):
         if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING":
             print(toks[i+1][7:])
-            i+=2
-        
+        i += 2
         
 def run():
     data = open_file(argv[1])
