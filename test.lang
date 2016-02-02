@@ -1,2 +1,3 @@
-$MYVARIABLE = 10 + 2
-print $MYVARIABLE
+$var1 = 10
+$var2 = $var1
+print $var2

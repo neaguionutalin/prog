@@ -107,6 +107,7 @@ def getVARIABLE (varname):
         return symbols[varname]
     else:
         return "VARIABLE ERROR: Undefined Variable"
+        exit()
         
         
 def parse(toks):
@@ -122,13 +123,15 @@ def parse(toks):
             elif toks[i+1][0:3] == "VAR":
                 doPRINT(getVARIABLE(toks[i+1]))
             i += 2
-        elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR":
+        elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR":
             if toks[i+2][0:6] == "STRING":
                 doASSIGN(toks[i], toks[i+2])
             elif toks[i+2][0:3] == "NUM":
                 doASSIGN(toks[i], toks[i+2])
             elif toks[i+2][0:4] == "EXPR":
                 doASSIGN(toks[i], "NUM:" + str(evalExpression(toks[i+2][5:])))
+            elif toks[i+2][0:3] == "VAR":
+                doASSIGN(toks[i], getVARIABLE(toks[i+2]))
             i+=3
     #print(symbols)
             
