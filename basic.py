@@ -58,24 +58,7 @@ def lex(filecontents):
     return tokens
     
 def evalExpression(expr):
-    expr =  "," + expr
-    i =len(expr) - 1
-    num = ""
-    
-    while(i>=0):
-        if(expr[i]== "+" or expr[i]== "-" or expr[i]== "/" or expr[i]== "*" or expr[i]== "%"):
-            num = num[::-1]
-            num_stack.append(num)
-            num_stack.append(expr[i])
-            num = ""
-        elif(expr[i] == ","):
-            num=num[::-1]
-            num_stack.append(num)
-            num = " "
-        else:
-            num += expr[i]
-        i -= 1
-    print(num_stack)
+    return eval(expr)
     
 def doPRINT(toPRINT):
     if toPRINT[0:6] == "STRING":
