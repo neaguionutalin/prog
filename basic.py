@@ -1,6 +1,7 @@
 from sys import *
 
 tokens = []
+num_stack = []
 
 def open_file(filename):
     data = open(filename, "r").read()
@@ -53,9 +54,28 @@ def lex(filecontents):
             string += tok
             tok = "" 
         
-    print(tokens)
+    #print(tokens)
     return tokens
     
+def evalExpression(expr):
+    expr =  "," + expr
+    i =len(expr) - 1
+    num = ""
+    
+    while(i>=0):
+        if(expr[i]== "+" or expr[i]== "-" or expr[i]== "/" or expr[i]== "*" or expr[i]== "%"):
+            num = num[::-1]
+            num_stack.append(num)
+            num_stack.append(expr[i])
+            num = ""
+        elif(expr[i] == ","):
+            num=num[::-1]
+            num_stack.append(num)
+            num = " "
+        else:
+            num += expr[i]
+        i -= 1
+    print(num_stack)
     
 def doPRINT(toPRINT):
     if toPRINT[0:6] == "STRING":
@@ -64,7 +84,7 @@ def doPRINT(toPRINT):
     if toPRINT[0:3] == "NUM":
         toPRINT = toPRINT[4:]
     if toPRINT[0:4] == "EXPR":
-        toPRINT = toPRINT[5:]
+        toPRINT = evalExpression(toPRINT[5:])
     print(toPRINT)
         
         

@@ -1,2 +1,1 @@
-print "Hello World"
-print 93+23 +32 -11
+print 12 + 2 * 3
