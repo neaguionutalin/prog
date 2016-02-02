@@ -1,3 +1,2 @@
-print 12 + 2 * 3
-$MYVARIABLE = "Hello World"
-$IMBORED = "I am really bored"
+$MYVARIABLE = 10 + 2
+print $MYVARIABLE

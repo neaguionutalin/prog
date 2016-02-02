@@ -51,6 +51,11 @@ def lex(filecontents):
             var += tok
             tok = ""
         elif varstarted ==1:
+            if tok == "<" or tok == ">":
+                if var != "":
+                    tokens.append("VAR:" + var)
+                    var = ""
+                    varstarted = 0
             var += tok
             tok = ""
         elif  tok == "print" or tok == "PRINT":
@@ -96,22 +101,36 @@ def doPRINT(toPRINT):
 def doASSIGN(varname, varvalue):
     symbols[varname[4:]]=varvalue
         
+def getVARIABLE (varname):
+    varname = varname[4:]
+    if varname in symbols:
+        return symbols[varname]
+    else:
+        return "VARIABLE ERROR: Undefined Variable"
+        
         
 def parse(toks):
     i = 0
     while(i<len(toks)):
-        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM":
+        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
             if toks[i+1][0:6] == "STRING":
                 doPRINT(toks[i+1])
             elif toks[i+1][0:3] == "NUM":
                 doPRINT(toks[i+1])
             elif toks[i+1][0:4] == "EXPR":
                 doPRINT(toks[i+1])
+            elif toks[i+1][0:3] == "VAR":
+                doPRINT(getVARIABLE(toks[i+1]))
             i += 2
-        if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING":
-            doASSIGN(toks[i], toks[i+2])
+        elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR":
+            if toks[i+2][0:6] == "STRING":
+                doASSIGN(toks[i], toks[i+2])
+            elif toks[i+2][0:3] == "NUM":
+                doASSIGN(toks[i], toks[i+2])
+            elif toks[i+2][0:4] == "EXPR":
+                doASSIGN(toks[i], "NUM:" + str(evalExpression(toks[i+2][5:])))
             i+=3
-    print(symbols)
+    #print(symbols)
             
         
 def run():
