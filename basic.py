@@ -13,6 +13,8 @@ def lex(filecontents):
     state = 0
     expr = ""
     isexpr = 0
+    var = ""
+    varstarted = 0
     n = ""
     string = ""
     filecontents = list(filecontents)
@@ -31,6 +33,24 @@ def lex(filecontents):
             elif expr != "" and isexpr == 0:
                 tokens.append("NUM:" + expr)
                 expr = ""
+            elif var != "":
+                tokens.append("VAR:" + var)
+                var = ""
+                varstarted = 0
+            tok = ""
+        elif tok == "=" and state == 0:
+            if var != "":
+                tokens.append("VAR:" + var)
+                var = ""
+                varstarted = 0
+            tokens.append("EQUALS")
+            tok = ""
+        elif tok == "$" and state == 0:
+            varstarted = 1
+            var += tok
+            tok = ""
+        elif varstarted ==1:
+            var += tok
             tok = ""
         elif  tok == "print" or tok == "PRINT":
             tokens.append("PRINT")
@@ -54,7 +74,7 @@ def lex(filecontents):
             string += tok
             tok = "" 
         
-    #print(tokens)
+    print(tokens)
     return tokens
     
 def evalExpression(expr):
