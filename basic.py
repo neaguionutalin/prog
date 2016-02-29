@@ -61,6 +61,9 @@ def lex(filecontents):
         elif  tok == "print" or tok == "PRINT":
             tokens.append("PRINT")
             tok = ""
+        elif  tok == "input" or tok == "INPUT":
+            tokens.append("INPUT")
+            tok = ""
         elif tok == "0" or tok == "1" or tok == "2" or tok == "3" or tok == "4" or tok == "5" or tok == "6" or tok == "7" or tok == "8" or tok == "9":
             expr += tok
             tok = ""
@@ -68,26 +71,26 @@ def lex(filecontents):
             isexpr = 1
             expr += tok
             tok = ""
-        elif tok == "\"":
+        elif tok == "\"" or tok == " \"":
             if state == 0:
                 state = 1
             elif state ==1:
                 tokens.append("STRING:" + string + "\"")
-                string = "" 
+                string = ""
                 state =0
-                tok = "" 
-        elif state == 1: 
+                tok = ""
+        elif state == 1:
             string += tok
-            tok = "" 
-        
+            tok = ""
+
     #print(tokens)
     return tokens
     #return ''
-    
-    
+
+
 def evalExpression(expr):
     return eval(expr)
-    
+
 def doPRINT(toPRINT):
     if toPRINT[0:6] == "STRING":
         toPRINT = toPRINT[8:]
@@ -97,10 +100,10 @@ def doPRINT(toPRINT):
     if toPRINT[0:4] == "EXPR":
         toPRINT = evalExpression(toPRINT[5:])
     print(toPRINT)
-    
+
 def doASSIGN(varname, varvalue):
     symbols[varname[4:]]=varvalue
-        
+
 def getVARIABLE (varname):
     varname = varname[4:]
     if varname in symbols:
@@ -108,8 +111,12 @@ def getVARIABLE (varname):
     else:
         return "VARIABLE ERROR: Undefined Variable"
         exit()
-        
-        
+
+def getINPUT (string, varname):
+    i = input(string[1:-1] + " ")
+    symbols[varname] = "STRING:\"" + i + "\""
+
+
 def parse(toks):
     i = 0
     while(i<len(toks)):
@@ -133,9 +140,12 @@ def parse(toks):
             elif toks[i+2][0:3] == "VAR":
                 doASSIGN(toks[i], getVARIABLE(toks[i+2]))
             i+=3
+        elif toks[i] + " " + toks[i+1][0:6] + " " + toks[i+2][0:3] == "INPUT STRING VAR":
+            getINPUT(toks[i+1][7:],toks[i+2][4:])
+            i+=3
     #print(symbols)
-            
-        
+
+
 def run():
     data = open_file(argv[1])
     toks = lex(data)
