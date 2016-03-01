@@ -40,11 +40,17 @@ def lex(filecontents):
                 varstarted = 0
             tok = ""
         elif tok == "=" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
             if var != "":
                 tokens.append("VAR:" + var)
                 var = ""
                 varstarted = 0
-            tokens.append("EQUALS")
+            if tokens[-1] == "EQUALS":
+                tokens[-1] = "EQEQ"
+            else:
+                tokens.append("EQUALS")
             tok = ""
         elif tok == "$" and state == 0:
             varstarted = 1
@@ -64,12 +70,26 @@ def lex(filecontents):
         elif  tok == "input" or tok == "INPUT":
             tokens.append("INPUT")
             tok = ""
+        elif  tok == "endif" or tok == "ENDIF":
+            tokens.append("ENDIF")
+            tok = ""
+        elif  tok == "if" or tok == "IF":
+            tokens.append("IF")
+            tok = ""
+        elif  tok == "then" or tok == "THEN":
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            tokens.append("THEN")
+            tok = ""
         elif tok == "0" or tok == "1" or tok == "2" or tok == "3" or tok == "4" or tok == "5" or tok == "6" or tok == "7" or tok == "8" or tok == "9":
             expr += tok
             tok = ""
         elif tok == "+" or tok == "-" or tok == "*" or tok == "/" or tok == "(" or tok == ")":
             isexpr = 1
             expr += tok
+            tok = ""
+        elif tok == "\t":
             tok = ""
         elif tok == "\"" or tok == " \"":
             if state == 0:
@@ -83,9 +103,9 @@ def lex(filecontents):
             string += tok
             tok = ""
 
-    #print(tokens)
-    return tokens
-    #return ''
+    print(tokens)
+    #return tokens
+    return ''
 
 
 def evalExpression(expr):
