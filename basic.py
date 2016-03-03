@@ -51,6 +51,8 @@ def lex(filecontents):
                 tokens[-1] = "EQEQ"
             elif tokens[-1] == "LESS":
                 tokens[-1] = "LESSEQUAL"
+            elif tokens[-1] == "MORE":
+                tokens[-1] = "MOREEQUAL"
             else:
                 tokens.append("EQUALS")
             tok = ""
@@ -188,6 +190,16 @@ def parse(toks):
                 if toks[i][4:] > toks[i+2][4:]:
                     ifc = 0
                 elif toks[i][4:] < toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM LESSEQUAL NUM":
+                if toks[i][4:] <= toks[i+2][4:]:
+                    ifc = 0
+                elif toks[i][4:] >= toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM MOREEQUAL NUM":
+                if toks[i][4:] >= toks[i+2][4:]:
+                    ifc = 0
+                elif toks[i][4:] <= toks[i+2][4:]:
                     ifc = 1
             i+=4
         if ifc == 0:
