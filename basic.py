@@ -76,6 +76,16 @@ def lex(filecontents):
                 varstarted = 0
             tokens.append("MORE")
             tok = ""
+        elif tok == "!=" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if var != "":
+                tokens.append("VAR:" + var)
+                var = ""
+                varstarted = 0
+            tokens.append("NOTEQUAL")
+            tok = ""
         elif tok == "$" and state == 0:
             varstarted = 1
             var += tok
@@ -200,6 +210,11 @@ def parse(toks):
                 if toks[i][4:] >= toks[i+2][4:]:
                     ifc = 0
                 elif toks[i][4:] <= toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM NOTEQUAL NUM":
+                if toks[i][4:] != toks[i+2][4:]:
+                    ifc = 0
+                elif toks[i][4:] == toks[i+2][4:]:
                     ifc = 1
             i+=4
         if ifc == 0:
