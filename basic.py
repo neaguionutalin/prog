@@ -70,11 +70,14 @@ def lex(filecontents):
         elif  tok == "input" or tok == "INPUT":
             tokens.append("INPUT")
             tok = ""
-        elif  tok == "endif" or tok == "ENDIF":
-            tokens.append("ENDIF")
-            tok = ""
         elif  tok == "if" or tok == "IF":
             tokens.append("IF")
+            tok = ""
+        elif tok == "elif" or tok == "ELIF":
+            tokens.append("ELIF")
+            tok = ""
+        elif tok == "else" or tok == "ELSE":
+            tokens.append("ELSE")
             tok = ""
         elif  tok == "then" or tok == "THEN":
             if expr != "" and isexpr == 0:
@@ -103,9 +106,9 @@ def lex(filecontents):
             string += tok
             tok = ""
 
-    print(tokens)
-    #return tokens
-    return ''
+    #print(tokens)
+    return tokens
+    #return ''
 
 
 def evalExpression(expr):
@@ -139,30 +142,40 @@ def getINPUT (string, varname):
 
 def parse(toks):
     i = 0
+    ifc = 0
+    #ifc -> 0 not in if
     while(i<len(toks)):
-        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
-            if toks[i+1][0:6] == "STRING":
-                doPRINT(toks[i+1])
-            elif toks[i+1][0:3] == "NUM":
-                doPRINT(toks[i+1])
-            elif toks[i+1][0:4] == "EXPR":
-                doPRINT(toks[i+1])
-            elif toks[i+1][0:3] == "VAR":
-                doPRINT(getVARIABLE(toks[i+1]))
-            i += 2
-        elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR":
-            if toks[i+2][0:6] == "STRING":
-                doASSIGN(toks[i], toks[i+2])
-            elif toks[i+2][0:3] == "NUM":
-                doASSIGN(toks[i], toks[i+2])
-            elif toks[i+2][0:4] == "EXPR":
-                doASSIGN(toks[i], "NUM:" + str(evalExpression(toks[i+2][5:])))
-            elif toks[i+2][0:3] == "VAR":
-                doASSIGN(toks[i], getVARIABLE(toks[i+2]))
-            i+=3
-        elif toks[i] + " " + toks[i+1][0:6] + " " + toks[i+2][0:3] == "INPUT STRING VAR":
-            getINPUT(toks[i+1][7:],toks[i+2][4:])
-            i+=3
+        if toks[i] == "IF":
+            ifc = 1
+            i+=1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM EQEQ NUM":
+                if toks[i][4:] == toks[i+2][4:]:
+                    ifc = 2
+                i+=4
+        if ifc == 0 or ifc == 2:
+            if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
+                if toks[i+1][0:6] == "STRING":
+                    doPRINT(toks[i+1])
+                elif toks[i+1][0:3] == "NUM":
+                    doPRINT(toks[i+1])
+                elif toks[i+1][0:4] == "EXPR":
+                    doPRINT(toks[i+1])
+                elif toks[i+1][0:3] == "VAR":
+                    doPRINT(getVARIABLE(toks[i+1]))
+                i += 2
+            elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR":
+                if toks[i+2][0:6] == "STRING":
+                    doASSIGN(toks[i], toks[i+2])
+                elif toks[i+2][0:3] == "NUM":
+                    doASSIGN(toks[i], toks[i+2])
+                elif toks[i+2][0:4] == "EXPR":
+                    doASSIGN(toks[i], "NUM:" + str(evalExpression(toks[i+2][5:])))
+                elif toks[i+2][0:3] == "VAR":
+                    doASSIGN(toks[i], getVARIABLE(toks[i+2]))
+                i+=3
+            elif toks[i] + " " + toks[i+1][0:6] + " " + toks[i+2][0:3] == "INPUT STRING VAR":
+                getINPUT(toks[i+1][7:],toks[i+2][4:])
+                i+=3
     #print(symbols)
 
 
