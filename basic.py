@@ -49,8 +49,30 @@ def lex(filecontents):
                 varstarted = 0
             if tokens[-1] == "EQUALS":
                 tokens[-1] = "EQEQ"
+            elif tokens[-1] == "LESS":
+                tokens[-1] = "LESSEQUAL"
             else:
                 tokens.append("EQUALS")
+            tok = ""
+        elif tok == "<" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if var != "":
+                tokens.append("VAR:" + var)
+                var = ""
+                varstarted = 0
+            tokens.append("LESS")
+            tok = ""
+        elif tok == ">" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if var != "":
+                tokens.append("VAR:" + var)
+                var = ""
+                varstarted = 0
+            tokens.append("MORE")
             tok = ""
         elif tok == "$" and state == 0:
             varstarted = 1
@@ -106,6 +128,8 @@ def lex(filecontents):
             string += tok
             tok = ""
 
+    if tokens[-1] == "LESS":
+        del tokens[-1]
     #print(tokens)
     return tokens
     #return ''
@@ -143,16 +167,30 @@ def getINPUT (string, varname):
 def parse(toks):
     i = 0
     ifc = 0
-    #ifc -> 0 not in if
+    #ifc -> 0 not in if or if true
+    #ifc -> 1 if false
+
     while(i<len(toks)):
         if toks[i] == "IF":
             ifc = 1
             i+=1
             if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM EQEQ NUM":
                 if toks[i][4:] == toks[i+2][4:]:
-                    ifc = 2
-                i+=4
-        if ifc == 0 or ifc == 2:
+                    ifc = 0
+                if toks[i][4:] != toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM LESS NUM":
+                if toks[i][4:] < toks[i+2][4:]:
+                    ifc = 0
+                elif toks[i][4:] > toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM MORE NUM":
+                if toks[i][4:] > toks[i+2][4:]:
+                    ifc = 0
+                elif toks[i][4:] < toks[i+2][4:]:
+                    ifc = 1
+            i+=4
+        if ifc == 0:
             if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
                 if toks[i+1][0:6] == "STRING":
                     doPRINT(toks[i+1])
@@ -175,6 +213,13 @@ def parse(toks):
                 i+=3
             elif toks[i] + " " + toks[i+1][0:6] + " " + toks[i+2][0:3] == "INPUT STRING VAR":
                 getINPUT(toks[i+1][7:],toks[i+2][4:])
+                i+=3
+        if ifc == 1:
+            if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
+                i += 2
+            elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR":
+                i+=3
+            elif toks[i] + " " + toks[i+1][0:6] + " " + toks[i+2][0:3] == "INPUT STRING VAR":
                 i+=3
     #print(symbols)
 
