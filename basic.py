@@ -196,25 +196,50 @@ def parse(toks):
                     ifc = 0
                 elif toks[i][4:] > toks[i+2][4:]:
                     ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR LESS VAR":
+                if getVARIABLE(toks[i]) < getVARIABLE(toks[i+2]):
+                    ifc = 0
+                if getVARIABLE(toks[i]) > getVARIABLE(toks[i+2]):
+                    ifc = 1
             if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM MORE NUM":
                 if toks[i][4:] > toks[i+2][4:]:
                     ifc = 0
                 elif toks[i][4:] < toks[i+2][4:]:
                     ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR MORE VAR":
+                if getVARIABLE(toks[i]) > getVARIABLE(toks[i+2]):
+                    ifc = 0
+                if getVARIABLE(toks[i]) < getVARIABLE(toks[i+2]):
+                    ifc = 1
             if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM LESSEQUAL NUM":
                 if toks[i][4:] <= toks[i+2][4:]:
                     ifc = 0
-                elif toks[i][4:] >= toks[i+2][4:]:
+                elif toks[i][4:] > toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR LESSEQUAL VAR":
+                if getVARIABLE(toks[i]) <= getVARIABLE(toks[i+2]):
+                    ifc = 0
+                if getVARIABLE(toks[i]) > getVARIABLE(toks[i+2]):
                     ifc = 1
             if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM MOREEQUAL NUM":
                 if toks[i][4:] >= toks[i+2][4:]:
                     ifc = 0
-                elif toks[i][4:] <= toks[i+2][4:]:
+                elif toks[i][4:] < toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR MOREEQUAL VAR":
+                if getVARIABLE(toks[i]) >= getVARIABLE(toks[i+2]):
+                    ifc = 0
+                if getVARIABLE(toks[i]) < getVARIABLE(toks[i+2]):
                     ifc = 1
             if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "NUM NOTEQUAL NUM":
                 if toks[i][4:] != toks[i+2][4:]:
                     ifc = 0
                 elif toks[i][4:] == toks[i+2][4:]:
+                    ifc = 1
+            if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR NOTEQUAL VAR":
+                if getVARIABLE(toks[i]) != getVARIABLE(toks[i+2]):
+                    ifc = 0
+                if getVARIABLE(toks[i]) == getVARIABLE(toks[i+2]):
                     ifc = 1
             i+=3
         if ifc == 0:
