@@ -1,5 +1,4 @@
-$var1 = 1
-$var2 = 1
-
-if $var1 == $var2
-  print "I'm bored"
+for 1 to 10
+    print "Hello"
+if 1 < 2
+  print "Done"
