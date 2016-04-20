@@ -335,7 +335,9 @@ def parse(toks):
 
 
 def run():
-    data = open_file(argv[1])
+    filename = ""
+    filename = input("what is the name of you file? (Please include the extension as well) ")
+    data = open_file(filename)
     toks = lex(data)
     parse(toks)
 run()
